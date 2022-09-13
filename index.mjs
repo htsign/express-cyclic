@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { router as extensionRouter } from './lib/extension.mjs';
 import { router as suggestRouter } from './lib/suggest.mjs';
 
 const app = express();
@@ -10,20 +11,7 @@ router.get('/', (req, res, next) => {
   res.send('Hello World!');
 });
 
-router.get('/listary/goodic', async (req, res, next) => {
-  const { query } = req.query;
-
-  console.log({ query });
-  try {
-    const { search } = await import('./lib/goodic.mjs');
-    res.json(await search(query));
-  }
-  catch (err) {
-    next(err);
-  }
-});
-
-app.use(cors());
 app.use(router);
+app.use('/extension', extensionRouter);
 app.use('/suggest', suggestRouter);
 app.listen(3000);
